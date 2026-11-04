@@ -637,4 +637,28 @@ public void fechar() throws IOException {
             return novoOffset; // Retorna a nova posição para a arvore B+ ser atualizada
         }
     }
+    // Le todos os registos validos da base de dados (lapide == 0)
+    public java.util.List<Jogo> lerTodos() throws IOException {
+        java.util.List<Jogo> lista = new java.util.ArrayList<>();
+        
+        // Salta o cabecalho de 4 bytes (ultimoId)
+        arquivo.seek(4);
+        
+        while (arquivo.getFilePointer() < arquivo.length()) {
+            byte lapide = arquivo.readByte();
+            int tamanho = arquivo.readInt();
+
+            byte[] vetor = new byte[tamanho];
+            arquivo.readFully(vetor);
+
+            // Apenas adiciona se nao estiver marcado como excluido
+            if (lapide == 0) {
+                Jogo jogo = new Jogo();
+                jogo.arrayParaByte(vetor);
+                lista.add(jogo);
+            }
+        }
+        
+        return lista;
+    }
 }

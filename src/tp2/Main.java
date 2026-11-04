@@ -1,6 +1,7 @@
 package tp2;
 
 import java.io.File;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -29,6 +30,7 @@ public class Main {
             System.out.println("5 - Deletar jogo");
             System.out.println("6 - Ordenar arquivo");
             System.out.println("7 - Busca Combinada");
+            System.out.println("8 - Casamento de Padrao");
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -315,6 +317,44 @@ public class Main {
                         }
                     }
                     break;
+                    case 8:
+                    // Casamento de Padrões (TP3)
+                    System.out.println("\n--- Casamento de Padrões (KMP vs Boyer-Moore) ---");
+                    System.out.print("Digite o padrão de texto a ser procurado nos nomes dos jogos: ");
+                    scanf.nextLine();
+                    String padraoBusca = scanf.nextLine();
+
+                    // 1. Execução com KMP
+                    long inicioKmp = System.currentTimeMillis();
+                    int ocorrenciasKmp = 0;
+                    java.util.List<Jogo> todosJogosKmp = arquivo.lerTodos(); // Lê todos os registros do arquivo
+                    for (Jogo j : todosJogosKmp) {
+                        List<Integer> posicoes = CasamentoPadroes.buscarKMP(j.getNome().toLowerCase(), padraoBusca.toLowerCase());
+                        if (!posicoes.isEmpty()) {
+                            ocorrenciasKmp++;
+                        }
+                    }
+                    long fimKmp = System.currentTimeMillis();
+
+                    // 2. Execução com Boyer-Moore
+                    long inicioBm = System.currentTimeMillis();
+                    int ocorrenciasBm = 0;
+                    java.util.List<Jogo> todosJogosBm = arquivo.lerTodos();
+                    for (Jogo j : todosJogosBm) {
+                        List<Integer> posicoes = CasamentoPadroes.buscarMoore(j.getNome().toLowerCase(), padraoBusca.toLowerCase());
+                        if (!posicoes.isEmpty()) {
+                            ocorrenciasBm++;
+                            System.out.println("Encontrado no jogo [ID " + j.getId() + "]: " + j.getNome());
+                        }
+                    }
+                    long fimBm = System.currentTimeMillis();
+
+                    // Exibição e Comparação de Desempenho
+                    System.out.println("\n--- Resultados ---");
+                    System.out.println("Jogos que contêm o padrão: " + ocorrenciasBm);
+                    System.out.println("Tempo KMP: " + (fimKmp - inicioKmp) + " ms");
+                    System.out.println("Tempo Boyer-Moore: " + (fimBm - inicioBm) + " ms");
+                    break;
 
                 case 0:
                     // fechar o manipulador
@@ -328,4 +368,5 @@ public class Main {
 
         scanf.close();
     }
+    
 }
