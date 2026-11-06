@@ -30,7 +30,9 @@ public class Main {
             System.out.println("5 - Deletar jogo");
             System.out.println("6 - Ordenar arquivo");
             System.out.println("7 - Busca Combinada");
-            System.out.println("8 - Casamento de Padrao");
+            System.out.println("8 - Casamento de Padroes (KMP vs Boyer-Moore)");
+            System.out.println("9 - Compactar base de dados (Huffman e LZW)");
+            System.out.println("10 - Descompactar versao da base de dados");
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -132,7 +134,7 @@ public class Main {
 
                     break;
 
-                    case 3:
+                case 3:
                     System.out.print("Digite o ID do jogo: ");
                     int id = scanf.nextInt();
 
@@ -140,14 +142,15 @@ public class Main {
                     long offsetBusca = arvore.buscar(id);
 
                     if (offsetBusca != -1) {
-                        Jogo jogo = arquivo.LerArvore(offsetBusca); 
-                        
+                        Jogo jogo = arquivo.LerArvore(offsetBusca);
+
                         // Verificar se o jogo retornado não esta deletado lapide 1
                         if (jogo != null) {
                             System.out.println("ID: " + jogo.getId());
                             System.out.println("Nome: " + jogo.getNome());
                             System.out.println("Donos: " + jogo.getDonos());
-                            String dataFormatada = new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date(jogo.getDataLancamento()));
+                            String dataFormatada = new java.text.SimpleDateFormat("dd/MM/yyyy")
+                                    .format(new java.util.Date(jogo.getDataLancamento()));
                             System.out.println("Data: " + dataFormatada);
                             System.out.println("Preço: $" + jogo.getPreco());
                             System.out.println("Gênero: " + jogo.getGenero());
@@ -218,9 +221,10 @@ public class Main {
                     long novoOffset = arquivo.updateByOffset(offsetAtual, jogoUpdate);
 
                     if (novoOffset != -1) {
-                        // Se o registro aumentou e foi movido para o fim do arquivo, a árvore tem de ser atualizada com o novo offset
+                        // Se o registro aumentou e foi movido para o fim do arquivo, a árvore tem de
+                        // ser atualizada com o novo offset
                         if (novoOffset != offsetAtual) {
-                            arvore.inserir(idUpdate, novoOffset); 
+                            arvore.inserir(idUpdate, novoOffset);
                             arvore.salvar();
                         }
                         System.out.println("Jogo atualizado com sucesso!");
@@ -242,7 +246,7 @@ public class Main {
                         if (deletou) {
                             System.out.println("Jogo deletado com sucesso");
                             // exclusao preguiçosa
-                            // O offset continua la  mas o arquivo esta como lapide
+                            // O offset continua la mas o arquivo esta como lapide
                         } else {
                             System.out.println("Erro ao deletar.");
                         }
@@ -269,13 +273,13 @@ public class Main {
                     System.out.println("Ordenado");
 
                     break;
-                    case 7:
+                case 7:
                     System.out.println("Busca Combinada Genero e Nome ");
-                    
+
                     System.out.print("Digite um gênero Ex: Action, Indie: ");
-                    scanf.nextLine(); 
+                    scanf.nextLine();
                     String buscaGenero = scanf.nextLine();
-                    
+
                     System.out.print("Digite uma palavra do nome do jogo Ex: War, Simulator: ");
                     String buscaNome = scanf.nextLine();
 
@@ -311,37 +315,39 @@ public class Main {
                             if (offsetJogo != -1) {
                                 Jogo jogoEncontrado = arquivo.LerArvore(offsetJogo);
                                 if (jogoEncontrado != null) {
-                                    System.out.println("ID: " + jogoEncontrado.getId() + " | Nome: " + jogoEncontrado.getNome() + " | Gênero: " + jogoEncontrado.getGenero());
+                                    System.out.println("ID: " + jogoEncontrado.getId() + " | Nome: "
+                                            + jogoEncontrado.getNome() + " | Gênero: " + jogoEncontrado.getGenero());
                                 }
                             }
                         }
                     }
                     break;
-                    case 8:
-                    // Casamento de Padrões (TP3)
-                    System.out.println("\n--- Casamento de Padrões (KMP vs Boyer-Moore) ---");
-                    System.out.print("Digite o padrão de texto a ser procurado nos nomes dos jogos: ");
+                case 8:
+                    System.out.println("\nCasamento de Padroes ");
+                    System.out.print("Digite o padrao de texto a ser procurado nos nomes dos jogos: ");
                     scanf.nextLine();
                     String padraoBusca = scanf.nextLine();
 
-                    // 1. Execução com KMP
+                    // KMP
                     long inicioKmp = System.currentTimeMillis();
                     int ocorrenciasKmp = 0;
-                    java.util.List<Jogo> todosJogosKmp = arquivo.lerTodos(); // Lê todos os registros do arquivo
+                    List<Jogo> todosJogosKmp = arquivo.lerTodos();
                     for (Jogo j : todosJogosKmp) {
-                        List<Integer> posicoes = CasamentoPadroes.buscarKMP(j.getNome().toLowerCase(), padraoBusca.toLowerCase());
+                        List<Integer> posicoes = CasamentoPadroes.buscarKMP(j.getNome().toLowerCase(),
+                                padraoBusca.toLowerCase());
                         if (!posicoes.isEmpty()) {
                             ocorrenciasKmp++;
                         }
                     }
                     long fimKmp = System.currentTimeMillis();
 
-                    // 2. Execução com Boyer-Moore
+                    // Boyer-Moore
                     long inicioBm = System.currentTimeMillis();
                     int ocorrenciasBm = 0;
-                    java.util.List<Jogo> todosJogosBm = arquivo.lerTodos();
+                    List<Jogo> todosJogosBm = arquivo.lerTodos();
                     for (Jogo j : todosJogosBm) {
-                        List<Integer> posicoes = CasamentoPadroes.buscarMoore(j.getNome().toLowerCase(), padraoBusca.toLowerCase());
+                        List<Integer> posicoes = CasamentoPadroes.buscarMoore(j.getNome().toLowerCase(),
+                                padraoBusca.toLowerCase());
                         if (!posicoes.isEmpty()) {
                             ocorrenciasBm++;
                             System.out.println("Encontrado no jogo [ID " + j.getId() + "]: " + j.getNome());
@@ -349,11 +355,100 @@ public class Main {
                     }
                     long fimBm = System.currentTimeMillis();
 
-                    // Exibição e Comparação de Desempenho
-                    System.out.println("\n--- Resultados ---");
-                    System.out.println("Jogos que contêm o padrão: " + ocorrenciasBm);
+                    System.out.println("\nResultados");
+                    System.out.println("Jogos que contem o padrao: " + ocorrenciasBm);
                     System.out.println("Tempo KMP: " + (fimKmp - inicioKmp) + " ms");
                     System.out.println("Tempo Boyer-Moore: " + (fimBm - inicioBm) + " ms");
+                    break;
+
+                case 9:
+                    System.out.println("\nCompactacao da Base de Dados");
+                    File dbOriginal = new File("jogos.db");
+                    if (!dbOriginal.exists() || dbOriginal.length() == 0) {
+                        System.out.println("Erro: Base de dados vazia ou inexistente.");
+                        break;
+                    }
+
+                    System.out.print("Informe a versao da compressao");
+                    int versaoComp = scanf.nextInt();
+
+                    String arqHuffman = "jogos Huffman Compressao" + versaoComp;
+                    String arqLzw = "jogos LZW Compressao" + versaoComp;
+                    long tamOrig = dbOriginal.length();
+
+                    // Huffman
+                    System.out.println("\nExecutando Huffman");
+                    long t0H = System.currentTimeMillis();
+                    Huffman.comprimir("jogos.db", arqHuffman);
+                    long t1H = System.currentTimeMillis();
+                    long tempoHuffman = t1H - t0H;
+                    long tamH = new File(arqHuffman).length();
+                    double ganhoH = ((double) (tamOrig - tamH) / tamOrig) * 100.0;
+
+                    // LZW
+                    System.out.println("Executando LZW");
+                    long t0L = System.currentTimeMillis();
+                    LZW.comprimir("jogos.db", arqLzw);
+                    long t1L = System.currentTimeMillis();
+                    long tempoLzw = t1L - t0L;
+                    long tamL = new File(arqLzw).length();
+                    double ganhoL = ((double) (tamOrig - tamL) / tamOrig) * 100.0;
+
+                    System.out.println("\nResultado compreesao ");
+                    System.out.println("Tamanho Original: " + tamOrig + " bytes");
+                    System.out.printf("\nHuffman: %d bytes | Reducao: %.2f%% | Tempo: %d ms\n", tamH, ganhoH,
+                            tempoHuffman);
+                    System.out.printf("LZW:     %d bytes | Reducao: %.2f%% | Tempo: %d ms\n", tamL, ganhoL, tempoLzw);
+
+                    if (tamH < tamL) {
+                        System.out.println("\nMelhor taxa de compressao: Huffman");
+                    } else {
+                        System.out.println("\nMelhor taxa de compressao: LZW");
+                    }
+                    break;
+
+                case 10:
+                    System.out.println("\n Descompressao da Base de Dados ");
+                    System.out.println("1 - Huffman");
+                    System.out.println("2 - LZW");
+                    System.out.print("Escolha o algoritmo: ");
+                    int algDesc = scanf.nextInt();
+
+                    System.out.print("Informe a versao : ");
+                    int versaoDesc = scanf.nextInt();
+
+                    String arqCompactado = (algDesc == 1)
+                            ? "jogos Huffman Compressao" + versaoDesc
+                            : "jogos LZW Compressao" + versaoDesc;
+
+                    File fComp = new File(arqCompactado);
+                    if (!fComp.exists()) {
+                        System.out.println("Erro: Arquivo '" + arqCompactado + "' nao encontrado.");
+                        break;
+                    }
+
+                    arquivo.fechar();
+                    String arqTemp = "jogos_descomprimido.db";
+                    long t0Desc = System.currentTimeMillis();
+
+                    if (algDesc == 1) {
+                        Huffman.descomprimir(arqCompactado, arqTemp);
+                    } else {
+                        LZW.descomprimir(arqCompactado, arqTemp);
+                    }
+                    long t1Desc = System.currentTimeMillis();
+
+                    File dbAtual = new File("jogos.db");
+                    if (dbAtual.exists()) {
+                        dbAtual.delete();
+                    }
+                    new File(arqTemp).renameTo(dbAtual);
+
+                    arquivo = new Arquivo("jogos.db");
+
+                    System.out.println("\nDescompressao concluida com sucesso!");
+                    System.out.println("Tempo: " + (t1Desc - t0Desc) + " ms");
+                    System.out.println("Base 'jogos.db' restaurada.");
                     break;
 
                 case 0:
@@ -368,5 +463,5 @@ public class Main {
 
         scanf.close();
     }
-    
+
 }
