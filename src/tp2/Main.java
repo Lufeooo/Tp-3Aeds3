@@ -47,7 +47,7 @@ public class Main {
                     // nao rodava
                     String[] caminhosPossiveis = {
                             "steam.csv",
-                            "Tp-2Aeds3/steam.csv",
+                            "Tp-3Aeds3/steam.csv",
                             "../steam.csv",
                             "/tmp/steam.csv"
                     };

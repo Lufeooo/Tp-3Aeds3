@@ -20,4 +20,4 @@ Descompressão e Restauração: Possibilidade de escolher uma versão compactada
 6. Com a base restaurada, você pode usar a opção 3 para ler um jogo por ID e confirmar que os dados permanecem íntegros.
 
 ## Vídeo
-https://drive.google.com/drive/folders/1HTXGPkVSoFkCHQ8BAwTenz3ihdq67cHc?usp=sharing
+https://drive.google.com/file/d/1bRLZv3NzKDtf-poBSGC-BDVG_tmz8PM3/view?usp=sharing
